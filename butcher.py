@@ -12,6 +12,7 @@ import ipaddress
 from xmljson import badgerfish as bf
 import pymustache
 import json
+from xml.dom.minidom import parseString
 
 mustache_template = """
 <!DOCTYPE html>
@@ -46,7 +47,8 @@ mustache_template = """
 		</style>
 	</head>
     <body>
-        <h2>Nessus Report - generated with the Nessus butcher</h2>
+        <h2>Nessus Report</h2>
+        <div>Generated with the Butcher: https://github.com/angerbjorn/butcher</div>
 		<h3>Table of findings:</h3>
 		<p class="list">
 			{{#severityList}}
@@ -104,14 +106,14 @@ def getValue( key, data ):
 	elif data.find(key) != None :
 		return data.find(key).text
 	else:
-		print('Unknown key error: "%s"\n\nSome common keys are:\n%s\nThe full nessus_v2 file format is documented in the nessus_v2_file_format.pdf paper.' %(key, ' '.join(['port', 'svc_name', 'protocol', 'severity', 'pluginID', 'pluginName', 'pluginFamily', 'agent', 'description', 'fname', 'plugin_modification_date', 'plugin_name', 'plugin_publication_date', 'plugin_type', 'risk_factor', 'script_version', 'solution', 'synopsis', 'plugin_output', 'IP', 'see_also', 'bid', 'cve', 'cvss3_base_score', 'cvss3_temporal_score', 'cvss3_temporal_vector', 'cvss3_vector', 'cvss_base_score', 'cvss_temporal_score', 'cvss_temporal_vector', 'cvss_vector', 'exploit_available', 'exploitability_ease', 'in_the_news', 'osvdb', 'vuln_publication_date', 'xref', 'cpe', 'patch_publication_date', 'cert', 'cwe', 'exploited_by_nessus', 'edb-id', 'icsa', 'cisco-bug-id', 'cisco-sa', 'iava', 'stig_severity', 'tra', 'zdi', 'canvas_package', 'exploit_framework_canvas', 'exploit_framework_core', 'attachment', 'exploit_framework_metasploit', 'metasploit_name', 'msft', 'unsupported_by_vendor', 'mskb', 'exploited_by_malware', 'mcafee-sb', 'cert-cc', 'iavb', 'vmsa', 'exploit_framework_exploithub', 'exploithub_sku', 'hp', 'rhsa', 'secunia', 'd2_elliot_name', 'exploit_framework_d2_elliot'])), file=sys.stderr)
+		print('Unknown key error: "%s"\n\nSome common keys are:\n%s\nThe full nessus_v2 file format is documented in the nessus_v2_file_format.pdf paper.\nAlso, --format xml or json can be helpful to understand the data structure and keys used.' %(key, ' '.join(['port', 'svc_name', 'protocol', 'severity', 'pluginID', 'pluginName', 'pluginFamily', 'agent', 'description', 'fname', 'plugin_modification_date', 'plugin_name', 'plugin_publication_date', 'plugin_type', 'risk_factor', 'script_version', 'solution', 'synopsis', 'plugin_output', 'IP', 'see_also', 'bid', 'cve', 'cvss3_base_score', 'cvss3_temporal_score', 'cvss3_temporal_vector', 'cvss3_vector', 'cvss_base_score', 'cvss_temporal_score', 'cvss_temporal_vector', 'cvss_vector', 'exploit_available', 'exploitability_ease', 'in_the_news', 'osvdb', 'vuln_publication_date', 'xref', 'cpe', 'patch_publication_date', 'cert', 'cwe', 'exploited_by_nessus', 'edb-id', 'icsa', 'cisco-bug-id', 'cisco-sa', 'iava', 'stig_severity', 'tra', 'zdi', 'canvas_package', 'exploit_framework_canvas', 'exploit_framework_core', 'attachment', 'exploit_framework_metasploit', 'metasploit_name', 'msft', 'unsupported_by_vendor', 'mskb', 'exploited_by_malware', 'mcafee-sb', 'cert-cc', 'iavb', 'vmsa', 'exploit_framework_exploithub', 'exploithub_sku', 'hp', 'rhsa', 'secunia', 'd2_elliot_name', 'exploit_framework_d2_elliot'])), file=sys.stderr)
 		exit()
 
 if __name__ == "__main__":
 	parser = optparse.OptionParser(usage="Usage: %prog [OPTION]... <NESSUS_FILE>...", description="Compiles a report from one or more .nessus v2 files. Output can be text, html or excel. Filters can be set to text matches, severity, hosts, IP-networks, or nessus-IDs", epilog='Open Source MIT License. Written by Christian Angerbjorn')
 	parser.add_option("-v", "--verbose", action="store_true")
 
-	parser.add_option("-f", "--format",  default='text', help='Optional output format, either of [text, html, excel] Defaults to text')
+	parser.add_option("-f", "--format",  default='text', help='Optional output format, either of [text, html, excel] (json, xml also exists for debugging) Defaults to text')
 	parser.add_option("-l", "--long", action="store_true", help="Text output can be either one line per IP (long) or one line per finding (compact). Compact is the Default")
 	parser.add_option("-o", "--output-file", help="Optional output file to save result as. Mandatory for Excel output.")
 	parser.add_option("-H", "--html-template", help="Optional Mustache HTML template to use. As a starting point, see the mustache_template=  in this source code.")
@@ -163,8 +165,8 @@ if __name__ == "__main__":
 			except:
 				parser.error('--max-severity has to be either a number from 0-4 or none, low, medium, high, critical')
 
-	if ops.format and ops.format not in ['text', 'html', 'excel']:
-		parser.error("Format can only be one of [text, html, excel]")
+	if ops.format and ops.format not in ['text', 'html', 'excel', 'json', 'xml']:
+		parser.error("Format can only be one of [text, html, excel, json, xml]")
 		
 	if ops.format == 'excel' and not ops.output_file:
 		parser.error('Excel output require an --output-file')
@@ -279,7 +281,7 @@ if __name__ == "__main__":
 													if not ops.match or (ops.match and re.search( ops.match, getValue(ops.match_key, ri ), re.IGNORECASE)):
 														if not ops.no_match or (ops.no_match and not re.search(ops.no_match, getValue(ops.match_key, ri), re.IGNORECASE)):
 															# filter done!
-															if ops.format == 'text' or ops.format == 'excel':
+															if ops.format in ['text', 'excel']:
 																# one line per IP output
 																long_findings.append( {"pluginID":ri.get("pluginID"), "risk_factor":ri.find("risk_factor").text, "pluginName":ri.get("pluginName"), "IP":IP , "severity":int(ri.get("severity"))})
 
@@ -293,7 +295,7 @@ if __name__ == "__main__":
 																	compact[ri.get("pluginID")]["IP"].append( IP )
 
 															# html output
-															elif ops.format == 'html':
+															elif ops.format in ['html', 'json']:
 																if not ri.get("pluginID") in compact:
 																	# first finding
 																	findings.append( {"pluginID":ri.get("pluginID"), "severity":int(ri.get("severity")), "risk_factor":ri.find("risk_factor").text, "pluginName":ri.get("pluginName"), 'count':0})
@@ -312,22 +314,36 @@ if __name__ == "__main__":
 																		compact[ri.get("pluginID")]["ReportItem"]["plugin_output"].append( {"output":ri.find("plugin_output").text, "IP":IP, "port": ri.get("port"), "svc_name": ri.get("svc_name")} )
 																	# print( json.dumps(compact[ri.get("pluginID")]["ReportItem"]["plugin_output"] , indent=4))
 
+															elif ops.format == 'xml':
+																findings.append( ri )
+
+
 			except xml.etree.ElementTree.ParseError as err:
 				print("Failed to parse XML data in file %s Error: %s" %(nessus_file, err),  file=sys.stderr) 
 				print("Input file most likely not a .nessus file?",  file=sys.stderr) 
 				exit()
 
-	# sort data 
-	findings.sort(key=operator.itemgetter("severity", "pluginID"), reverse=True)
-	long_findings.sort(key=operator.itemgetter("severity", "pluginID"), reverse=True)
+	if ops.format != 'xml':
+		# sort data
+		findings.sort(key=operator.itemgetter("severity", "pluginID"), reverse=True)
+		long_findings.sort(key=operator.itemgetter("severity", "pluginID"), reverse=True)
 
-	if ops.format in ('html', 'text'):
+	if ops.format in ('html', 'text', 'json', 'xml'):
 		outFile = None
 		if ops.output_file:
 			outFile = open( ops.output_file, 'w' )
 		
-	# text output 
-	if ops.format == 'text':
+	# text output
+	if ops.format == 'xml':
+		# only add newline when not alredy there 
+		nl = '\n'
+		if ord(xml.etree.ElementTree.tostring( findings[0] )[-1:]) in [10,13]: # check last digit is 10 or 13. str compare failes on this bin object...
+			nl = ''
+		for f in findings:
+			print( parseString( xml.etree.ElementTree.tostring( f )).toprettyxml(newl=nl), file=outFile)
+
+	# text output
+	elif ops.format == 'text':
 		print ("ID","severity","pluginName","IP", sep="\t", file=outFile)
 		if not ops.long:
 			for f in findings:
@@ -337,8 +353,9 @@ if __name__ == "__main__":
 			for f in long_findings:
 				print( f.get("pluginID"), f.get("risk_factor"), f.get("pluginName"), f.get("IP"), sep="\t", file=outFile) 
 
-	# html output 
-	elif ops.format == 'html':
+
+		# html output
+	elif ops.format in ['html', 'json']:
 		# custom template
 		if ops.html_template:
 			with open(ops.html_template, "r") as t:
@@ -354,8 +371,10 @@ if __name__ == "__main__":
 
 		# render
 		jReports = {"details":details, "severityList":findings }
-		# print( json.dumps(jReports, indent=4))
-		print( pymustache.render( mustache_template, jReports ), file=outFile)
+		if ops.format == 'json':
+			print( json.dumps(jReports, indent=4), file=outFile)
+		else:
+			print( pymustache.render( mustache_template, jReports ), file=outFile)
 	
 	# excel output 
 	elif ops.format == 'excel':

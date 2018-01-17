@@ -128,6 +128,7 @@ ID	severity	pluginName	IP
 
 ### Output formats
 The butcher supports text, html and excel output formats. 
+xml and json also exists for debugging.
 
 #### Excel output 
 The default text format is great when butchering up the data, but personally I prefer excel when you need the recipient to actually remediate the findings attached:
@@ -167,6 +168,9 @@ $ python3 butcher.py examples/example_scan.nessus --format html --output-file ex
 
 ![image of html report format](/examples/html_report.png)
 
+A custom html mustache HTML template can use used. As a starting point, use the mustache_template=  in butcher.py 
+The json structure passed to the template engine can be obeserved with --format json option.
+
 ### The butcher --help page
 
 ```
@@ -182,7 +186,7 @@ Options:
   -v, --verbose         
   -f FORMAT, --format=FORMAT
                         Optional output format, either of [text, html, excel]
-                        Defaults to text
+                        (json, xml also exists for debugging) Defaults to text
   -l, --long            Text output can be either one line per IP (long) or
                         one line per finding (compact). Compact is the Default
   -o OUTPUT_FILE, --output-file=OUTPUT_FILE
@@ -264,3 +268,5 @@ The butcher is written in Python3. The following python3 packages are required:
 
 ## License
 Open Source MIT License
+
+
