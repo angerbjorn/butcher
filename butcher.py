@@ -208,7 +208,7 @@ if __name__ == "__main__":
 			print("Exclude nessus ID: %s" %k, file=sys.stderr)
 			
 			
-	includeHosts = set()
+	includeHosts = set() # list of IP-addresses or hostnames. (hence not ipaddress.overlap used...)
 	excludeHosts = set()
 
 	reg = "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"

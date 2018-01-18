@@ -10,6 +10,8 @@ In such situations, the result from one or more .nessus scans are needed as in-d
 
 This is what the nessus butcher does, cut nessus scan reports in easily digestible pieces. All filter option can be inverted to get the opposite result, useful not to lose any data when cutting in two. 
 
+In the butcher analogy, the enterprise is obviously the carcasses, and you are the butcher that separates the rib eye from the t-bone to feed your hungry security managers. 
+
 ### Read data from multiple .nessus scan files
 
 Count findings from a single example scan:
@@ -168,8 +170,9 @@ $ python3 butcher.py examples/example_scan.nessus --format html --output-file ex
 
 ![image of html report format](/examples/html_report.png)
 
+#### HTML template 
 A custom html mustache HTML template can use used. As a starting point, use the mustache_template=  in butcher.py 
-The json structure passed to the template engine can be obeserved with --format json option.
+The json structure passed to the template engine can be observed with --format json option.  
 
 ### The butcher --help page
 
