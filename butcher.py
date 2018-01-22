@@ -190,7 +190,7 @@ if __name__ == "__main__":
 	for nf in ops.no_network_file:
 		with open( nf, 'r' ) as f: 
 			for n in f.read().splitlines():
-				ops.no-network.append( n )
+				ops.no_network.append( n )
 
 	# read include networks from excel 
 	if ops.network_excel or ops.format == 'excel':
