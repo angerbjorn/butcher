@@ -1,5 +1,5 @@
 # The Nessus Butcher
-### Read data from one or more .nessus files, filter data, and output as text, html or excel
+### Read data from one or more .nessus files, filter data, and output as text, html or excel / xlsx
 
 A needed but tedious tasks involved in enterprise vulnerability assessment and remediation is distributing needed findings to each owner.
 It is tedious, as ownership usually not align with your typical scanning strategy, and a lot of time and effort is needed to cut and paste needed data to each owner.

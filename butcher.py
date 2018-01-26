@@ -134,6 +134,7 @@ if __name__ == "__main__":
 	group.add_option("-r", "--network-file", action="append", default=[], help="Read CIRDs from file, one per line. Use multiple times as needed.")
 	group.add_option("-R", "--no-network-file", action="append", default=[], help="Read CIRDs from file, one per line. Use multiple times as needed.")
 	group.add_option("-e", "--network-excel", action="append", default=[], help="Read CIRDs from column A (or --column). Use multiple times as needed.")
+	group.add_option("-E", "--no-network-excel", action="append", default=[], help="Read CIRDs from column A (or --column). Use multiple times as needed.")
 	group.add_option("-C", "--column", action="append", default='A', help="Use this column in combination with --network-excel Defaults to A")
 	group.add_option("-i", "--id", action="append", default=[], help="Include only finding with this nessus ID the report. Use multiple times as needed.")
 	group.add_option("-I", "--no-id", action="append", default=[], help="Exclude findings with this nessus ID the report. Use multiple times as needed.")
@@ -193,13 +194,18 @@ if __name__ == "__main__":
 				ops.no_network.append( n )
 
 	# read include networks from excel 
-	if ops.network_excel or ops.format == 'excel':
+	if ops.network_excel or ops.no_network_excel or ops.format == 'excel':
 		from openpyxl import load_workbook, Workbook
 
 	for ef in ops.network_excel:
 		wb = load_workbook( filename=ef )
 		for i, row in enumerate(wb.active.iter_rows()):
 			ops.network.append( row[ ord(ops.column.upper())-65 ].value )
+
+	for ef in ops.no_network_excel:
+		wb = load_workbook( filename=ef )
+		for i, row in enumerate(wb.active.iter_rows()):
+			ops.no_network.append( row[ ord(ops.column.upper())-65 ].value )
 
 	if ops.verbose:
 		for k in ops.id:
