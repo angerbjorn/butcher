@@ -117,16 +117,22 @@ python3 butcher.py france.nessus  --network 10.32.0.0/24 --output-file paris-bra
 python3 butcher.py france.nessus  --no-network 10.32.0.0/24 --output-file france-without-paris.txt
 ```
 
-My preference is to save IP network data in excel for each owner that need a report:
+My personal preference is to save IP network data in excel for each owner that need a report. This has the advantage of showing subnet location as collected from the excel (need --long to be seen in text format):
+
+![image of subnets and locations](/examples/paris_branch_office.png)
+
 ```
-$ python3 butcher.py examples/*.nessus --min-severity critical --network-excel examples/paris_branch_office.xlsx 
-ID	severity	pluginName	IP
-63145	Critical	USN-1638-3 : firefox regressions	192.168.1.43
-63023	Critical	USN-1636-1 : thunderbird vulnerabilities	192.168.1.43
-35362	Critical	MS09-001: Microsoft Windows SMB Vulnerabilities Remote Code Execution (958687) (uncredentialed check)	192.168.1.34,192.168.1.100
-34477	Critical	MS08-067: Microsoft Windows Server Service Crafted RPC Request Handling Remote Code Execution (958644) (uncredentialed check)	192.168.1.34,192.168.1.100
-22194	Critical	MS06-040: Vulnerability in Server Service Could Allow Remote Code Execution (921883) (uncredentialed check)	192.168.1.100
+$ python3 butcher.py examples/*.nessus --min-severity critical --long --network-excel examples/paris_branch_office.xlsx
+ID	severity	pluginName	IP	Location
+63145	Critical	USN-1638-3 : firefox regressions	192.168.1.43	Paris branch - core net
+63023	Critical	USN-1636-1 : thunderbird vulnerabilities	192.168.1.43	Paris branch - core net
+35362	Critical	MS09-001: Microsoft Windows SMB Vulnerabilities Remote Code Execution (958687) (uncredentialed check)	192.168.1.34	Paris branch - core net
+35362	Critical	MS09-001: Microsoft Windows SMB Vulnerabilities Remote Code Execution (958687) (uncredentialed check)	192.168.1.100Paris branch - 1st floor
+34477	Critical	MS08-067: Microsoft Windows Server Service Crafted RPC Request Handling Remote Code Execution (958644) (uncredentialed check)	192.168.1.34	Paris branch - core net
+34477	Critical	MS08-067: Microsoft Windows Server Service Crafted RPC Request Handling Remote Code Execution (958644) (uncredentialed check)	192.168.1.100	Paris branch - 1st floor
+22194	Critical	MS06-040: Vulnerability in Server Service Could Allow Remote Code Execution (921883) (uncredentialed check)	192.168.1.100	Paris branch - 1st floor
 ```
+
 
 ### Output formats
 The butcher supports text, html and excel output formats. 

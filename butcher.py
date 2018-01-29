@@ -38,6 +38,7 @@ mustache_template = """
 			.sensitivity { float: left; color: #000000; font-size: 16px; font-family:Tahoma; overflow: hidden; text-align: center;  width: 30px; display: block; }
 }
 			.ReportItem {  padding-top 50px;  }
+			.IP {padding-bottom: 0px !important; }
 			.ReportItem div {white-space: pre-wrap; padding-bottom: 15px; }
 			.desc::first-line {text-decoration: underline;}
 			.pluginName {font-size: 120%;}
@@ -71,7 +72,7 @@ mustache_template = """
 					{{#description}}<div class="description desc">Description:<br>{{$}}</div>{{/description}}
 					{{#solution}}<div class="solution desc">Solution:<br>{{$}}</div>{{/solution}}
 					{{#synopsis}}<div class="synopsis desc">Synopsis:<br>{{$}}</div>{{/synopsis}}
-					<div class="plugin_output desc">Plugin output:<br>{{#plugin_output}}<br> &#11024; &#11024; &#11024; &#11024; &#11024; &#11024; Output for host {{IP}}&nbsp;:&nbsp;{{port}}&nbsp;({{svc_name}}) &#8628; &#8628; &#8628; &#8628; &#8628; &#8628; <br>{{output}}<br>{{/plugin_output}}</div>
+					<div class="plugin_output desc">Plugin output:<br>{{#plugin_output}}<br> &#11024; &#11024; &#11024; &#11024; &#11024; &#11024; Output for host {{IP}}&nbsp;:&nbsp;{{port}}&nbsp;({{svc_name}}) {{#location}}loc:&nbsp;{{location}}{{/location}} &#8628; &#8628; &#8628; &#8628; &#8628; &#8628; <br>{{output}}<br>{{/plugin_output}}</div>
 					{{#see_also}}<div class="see_also desc">See also:<br>{{$}}</div>{{/see_also}}
 					
 					{{#exploit_available}}<div class="exploit_available">Exploit available: {{$}}</div>{{/exploit_available}}
@@ -84,7 +85,7 @@ mustache_template = """
 					{{#attachment}}<div class="">attachment:{{$}}</div>{{/attachment}}
 					{{#in_the_news}}<div class="">in_the_news:{{$}}</div>{{/in_the_news}}
 					
-					<div class="IPS">Affected hosts: {{#IP}}<span class="IP">{{IP}} : {{port}}&nbsp;({{svc_name}})</span>   {{/IP}}</div>
+					<div class="IPS">Affected hosts: {{#IP}}<div class="IP">{{IP}} : {{port}}&nbsp;({{svc_name}}) {{#location}} - Location: {{location}}{{/location}}</div>{{/IP}}</div>
 					<div>Plugin ID: {{@pluginID}}</div>
 					<div class="bid ">bid: {{#bid}}{{$}} {{/bid}}</div>
 					<div class="xref ">xref: {{#xref}}{{$}} {{/xref}}</div>
@@ -106,7 +107,7 @@ def getValue( key, data ):
 	elif data.find(key) != None :
 		return data.find(key).text
 	else:
-		print('Unknown key error: "%s"\n\nSome common keys are:\n%s\nThe full nessus_v2 file format is documented in the nessus_v2_file_format.pdf paper.\nAlso, --format xml or json can be helpful to understand the data structure and keys used.' %(key, ' '.join(['port', 'svc_name', 'protocol', 'severity', 'pluginID', 'pluginName', 'pluginFamily', 'agent', 'description', 'fname', 'plugin_modification_date', 'plugin_name', 'plugin_publication_date', 'plugin_type', 'risk_factor', 'script_version', 'solution', 'synopsis', 'plugin_output', 'IP', 'see_also', 'bid', 'cve', 'cvss3_base_score', 'cvss3_temporal_score', 'cvss3_temporal_vector', 'cvss3_vector', 'cvss_base_score', 'cvss_temporal_score', 'cvss_temporal_vector', 'cvss_vector', 'exploit_available', 'exploitability_ease', 'in_the_news', 'osvdb', 'vuln_publication_date', 'xref', 'cpe', 'patch_publication_date', 'cert', 'cwe', 'exploited_by_nessus', 'edb-id', 'icsa', 'cisco-bug-id', 'cisco-sa', 'iava', 'stig_severity', 'tra', 'zdi', 'canvas_package', 'exploit_framework_canvas', 'exploit_framework_core', 'attachment', 'exploit_framework_metasploit', 'metasploit_name', 'msft', 'unsupported_by_vendor', 'mskb', 'exploited_by_malware', 'mcafee-sb', 'cert-cc', 'iavb', 'vmsa', 'exploit_framework_exploithub', 'exploithub_sku', 'hp', 'rhsa', 'secunia', 'd2_elliot_name', 'exploit_framework_d2_elliot'])), file=sys.stderr)
+		print('Fatal: Unknown key error: "%s"\n\nSome common keys are:\n%s\nThe full nessus_v2 file format is documented in the nessus_v2_file_format.pdf paper.\nAlso, --format xml or json can be helpful to understand the data structure and keys used.' %(key, ' '.join(['port', 'svc_name', 'protocol', 'severity', 'pluginID', 'pluginName', 'pluginFamily', 'agent', 'description', 'fname', 'plugin_modification_date', 'plugin_name', 'plugin_publication_date', 'plugin_type', 'risk_factor', 'script_version', 'solution', 'synopsis', 'plugin_output', 'IP', 'see_also', 'bid', 'cve', 'cvss3_base_score', 'cvss3_temporal_score', 'cvss3_temporal_vector', 'cvss3_vector', 'cvss_base_score', 'cvss_temporal_score', 'cvss_temporal_vector', 'cvss_vector', 'exploit_available', 'exploitability_ease', 'in_the_news', 'osvdb', 'vuln_publication_date', 'xref', 'cpe', 'patch_publication_date', 'cert', 'cwe', 'exploited_by_nessus', 'edb-id', 'icsa', 'cisco-bug-id', 'cisco-sa', 'iava', 'stig_severity', 'tra', 'zdi', 'canvas_package', 'exploit_framework_canvas', 'exploit_framework_core', 'attachment', 'exploit_framework_metasploit', 'metasploit_name', 'msft', 'unsupported_by_vendor', 'mskb', 'exploited_by_malware', 'mcafee-sb', 'cert-cc', 'iavb', 'vmsa', 'exploit_framework_exploithub', 'exploithub_sku', 'hp', 'rhsa', 'secunia', 'd2_elliot_name', 'exploit_framework_d2_elliot'])), file=sys.stderr)
 		exit()
 
 if __name__ == "__main__":
@@ -133,9 +134,10 @@ if __name__ == "__main__":
 	group.add_option("-N", "--no-network", action="append", default=[], help="Exclude IPv4-network, with CIDR IP/mask syntax, from the report. Use multiple times as needed.  Default mask is /32")
 	group.add_option("-r", "--network-file", action="append", default=[], help="Read CIRDs from file, one per line. Use multiple times as needed.")
 	group.add_option("-R", "--no-network-file", action="append", default=[], help="Read CIRDs from file, one per line. Use multiple times as needed.")
-	group.add_option("-e", "--network-excel", action="append", default=[], help="Read CIRDs from column A (or --column). Use multiple times as needed.")
-	group.add_option("-E", "--no-network-excel", action="append", default=[], help="Read CIRDs from column A (or --column). Use multiple times as needed.")
-	group.add_option("-C", "--column", action="append", default='A', help="Use this column in combination with --network-excel Defaults to A")
+	group.add_option("-e", "--network-excel", action="append", default=[], help="Read CIRDs from an excel spreadsheet. Use multiple times as needed.")
+	group.add_option("-E", "--no-network-excel", action="append", default=[], help="Read CIRDs from an excel spreadsheet. Use multiple times as needed.")
+	group.add_option("-C", "--subnet-column", default='A', help="Read subnet data with --network-excel  Defaults to A")
+	group.add_option("-X", "--location-column", default='B', help="Read subnet location name with --network-excel Defaults to B")
 	group.add_option("-i", "--id", action="append", default=[], help="Include only finding with this nessus ID the report. Use multiple times as needed.")
 	group.add_option("-I", "--no-id", action="append", default=[], help="Exclude findings with this nessus ID the report. Use multiple times as needed.")
 	group.add_option("-b", "--id-file", action="append", default=[], help="Include only finding, one per line, with this nessus ID the report. Use multiple times as needed.")
@@ -197,15 +199,19 @@ if __name__ == "__main__":
 	if ops.network_excel or ops.no_network_excel or ops.format == 'excel':
 		from openpyxl import load_workbook, Workbook
 
+	netLookup = {}
+	ipLookup = {}
 	for ef in ops.network_excel:
 		wb = load_workbook( filename=ef )
 		for i, row in enumerate(wb.active.iter_rows()):
-			ops.network.append( row[ ord(ops.column.upper())-65 ].value )
+			subnet =  row[ ord(ops.subnet_column.upper())-65 ].value 
+			ops.network.append( subnet ) # save location of this net
+			netLookup[ subnet ] = row[ ord(ops.location_column.upper())-65 ].value
 
 	for ef in ops.no_network_excel:
 		wb = load_workbook( filename=ef )
 		for i, row in enumerate(wb.active.iter_rows()):
-			ops.no_network.append( row[ ord(ops.column.upper())-65 ].value )
+			ops.no_network.append( row[ ord(ops.subnet_column.upper())-65 ].value )
 
 	if ops.verbose:
 		for k in ops.id:
@@ -217,25 +223,29 @@ if __name__ == "__main__":
 	includeHosts = set() # list of IP-addresses or hostnames. (hence not ipaddress.overlap used...)
 	excludeHosts = set()
 
-	reg = "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
 	for n in ops.network:
-		matchObj = re.search( reg, n )
-		if matchObj and matchObj.group(1):
-			if ops.verbose:
-				print("Including network %s" %n, file=sys.stderr) 
+		if ops.verbose:
+			print("Including network %s" %n, file=sys.stderr) 
+		try:
 			for addr in ipaddress.ip_network(n):
 				includeHosts.add( str(addr) )
-		else:
-			print("'%s' does not appear to be a network?" %n, file=sys.stderr)
+				if n in netLookup:
+					ipLookup[ str(addr) ] = netLookup[ n ]
+		except ValueError as err:
+			if not n.startswith( '#' ):
+				print("Fatal: '%s' does not appear to be a network? Please use # at the beging of the line for comments." %n, file=sys.stderr)
+				exit()
+
 	for n in ops.no_network:
-		matchObj = re.search( reg, n )
-		if matchObj and matchObj.group(1):
-			if ops.verbose:
-				print("Excluding network %s" %n, file=sys.stderr) 
+		if ops.verbose:
+			print("Excluding network %s" %n, file=sys.stderr) 
+		try:
 			for addr in ipaddress.ip_network(n):
 				excludeHosts.add( str(addr) )
-		else:
-			print("'%s' does not appear to be a network?" %n, file=sys.stderr)
+		except ValueError as err:
+			if not n.startswith( '#' ):
+				print("Fatal: '%s' does not appear to be a network? Please use # at the beging of the line for comments." %n, file=sys.stderr)
+				exit()
 
 	for h in ops.host:
 		includeHosts.add( h )
@@ -251,7 +261,6 @@ if __name__ == "__main__":
 	# list of some findidng data, so that we can sort in order or severity 
 	findings = [] # [{findings-data}, {findings-data}, {findings-data}]
 	long_findings = [] # [{findings-data}, {findings-data}, {findings-data}]
-
 
 	if ops.dump_xml_key or ops.dump_targets:
 		for nessus_file in args:
@@ -274,6 +283,9 @@ if __name__ == "__main__":
 				for report in xml.etree.ElementTree.parse(f).getroot().iter('Report'):			
 					for rh in report.findall("ReportHost"):
 						IP = rh.get("name")
+						ipLocation = ''
+						if IP in ipLookup:
+							ipLocation = ipLookup[ IP ]
 						# filter include or exclude this host? 
 						if includeHosts == set() or IP in includeHosts:
 							if excludeHosts == set() or IP not in excludeHosts:
@@ -289,7 +301,7 @@ if __name__ == "__main__":
 															# filter done!
 															if ops.format in ['text', 'excel']:
 																# one line per IP output
-																long_findings.append( {"pluginID":ri.get("pluginID"), "risk_factor":ri.find("risk_factor").text, "pluginName":ri.get("pluginName"), "IP":IP , "severity":int(ri.get("severity"))})
+																long_findings.append( {"pluginID":ri.get("pluginID"), "risk_factor":ri.find("risk_factor").text, "pluginName":ri.get("pluginName"), "IP":IP , 'location':ipLocation, "severity":int(ri.get("severity"))})
 
 																# compact output, meaning one file per finding
 																if not ri.get("pluginID") in compact:
@@ -306,18 +318,19 @@ if __name__ == "__main__":
 																	# first finding
 																	findings.append( {"pluginID":ri.get("pluginID"), "severity":int(ri.get("severity")), "risk_factor":ri.find("risk_factor").text, "pluginName":ri.get("pluginName"), 'count':0})
 																	compact[ri.get("pluginID")] = bf.data(ri)
-																	compact[ri.get("pluginID")]["ReportItem"]["IP"] = [{"IP":IP, "port": ri.get("port"), "svc_name": ri.get("svc_name")}]
+																	compact[ri.get("pluginID")]["ReportItem"]["IP"] = [{"IP":IP, 'location':ipLocation, "port": ri.get("port"), "svc_name": ri.get("svc_name")}]
 																else:
-																	# exists
-																	compact[ri.get("pluginID")]["ReportItem"]["IP"].append( {"IP":IP, "port": ri.get("port"), "svc_name": ri.get("svc_name")} )
+																	# exists, add IP info only
+																	compact[ri.get("pluginID")]["ReportItem"]["IP"].append( {"IP":IP, 'location':ipLocation, "port": ri.get("port"), "svc_name": ri.get("svc_name")} )
 
+																# collect plugin output for all findings:
 																if ri.find("plugin_output") != None and ri.find("plugin_output").text :
 																	if (not "plugin_output" in compact[ri.get("pluginID")]["ReportItem"]) or type(compact[ri.get("pluginID")]["ReportItem"]["plugin_output"]) != list  :
 																		# first plugin output for this finding
-																		compact[ri.get("pluginID")]["ReportItem"]["plugin_output"] = [{"output":ri.find("plugin_output").text, "IP":IP, "port": ri.get("port"), "svc_name": ri.get("svc_name")}]
+																		compact[ri.get("pluginID")]["ReportItem"]["plugin_output"] = [{"output":ri.find("plugin_output").text, "IP":IP, 'location':ipLocation, "port": ri.get("port"), "svc_name": ri.get("svc_name")}]
 																	else:
 																		# output exists, add data to that
-																		compact[ri.get("pluginID")]["ReportItem"]["plugin_output"].append( {"output":ri.find("plugin_output").text, "IP":IP, "port": ri.get("port"), "svc_name": ri.get("svc_name")} )
+																		compact[ri.get("pluginID")]["ReportItem"]["plugin_output"].append( {"output":ri.find("plugin_output").text, "IP":IP, 'location':ipLocation, "port": ri.get("port"), "svc_name": ri.get("svc_name")} )
 																	# print( json.dumps(compact[ri.get("pluginID")]["ReportItem"]["plugin_output"] , indent=4))
 
 															elif ops.format == 'xml':
@@ -325,7 +338,7 @@ if __name__ == "__main__":
 
 
 			except xml.etree.ElementTree.ParseError as err:
-				print("Failed to parse XML data in file %s Error: %s" %(nessus_file, err),  file=sys.stderr) 
+				print("Fatal: Failed to parse XML data in file %s Error: %s" %(nessus_file, err),  file=sys.stderr) 
 				print("Input file most likely not a .nessus file?",  file=sys.stderr) 
 				exit()
 
@@ -350,14 +363,17 @@ if __name__ == "__main__":
 
 	# text output
 	elif ops.format == 'text':
-		print ("ID","severity","pluginName","IP", sep="\t", file=outFile)
+		if ops.long:
+			print ("ID","severity","pluginName","IP","Location", sep="\t", file=outFile)
+		else:
+			print ("ID","severity","pluginName","IP", sep="\t", file=outFile)
 		if not ops.long:
 			for f in findings:
 				k = f.get("pluginID")
 				print( compact[k].get("pluginID"), compact[k].get("risk_factor"), compact[k].get("pluginName"), ",".join(compact[k].get("IP")), sep="\t", file=outFile) 
 		else:
 			for f in long_findings:
-				print( f.get("pluginID"), f.get("risk_factor"), f.get("pluginName"), f.get("IP"), sep="\t", file=outFile) 
+				print( f.get("pluginID"), f.get("risk_factor"), f.get("pluginName"), f.get("IP"),f.get("location"), sep="\t", file=outFile) 
 
 
 		# html output
@@ -400,14 +416,14 @@ if __name__ == "__main__":
 		excel_compact = excel_wb.create_sheet("Compact")
 		
 		excel_compact.append( ("ID","Severity","pluginName","IP" ))
-		excel_long.append(( "ID","Severity","pluginName","IP", "Remediation status", "Owner" ))  
+		excel_long.append(( "ID","Severity","pluginName","IP", "Location", "Remediation status", "Owner" ))  
 
 		for f in findings:
 			k = f.get("pluginID")
 			excel_compact.append( ( int(compact[k].get("pluginID")), compact[k].get("risk_factor"), compact[k].get("pluginName"), ",".join(compact[k].get("IP")) ) ) 
 
 		for f in long_findings:
-			excel_long.append(( int(f.get("pluginID")), f.get("risk_factor"), f.get("pluginName"), f.get("IP"))) 
+			excel_long.append(( int(f.get("pluginID")), f.get("risk_factor"), f.get("pluginName"), f.get("IP"), f.get("location"))) 
 	
 		excel_wb.save( ops.output_file )
 		
