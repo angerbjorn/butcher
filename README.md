@@ -248,11 +248,16 @@ Options:
                         Read CIRDs from file, one per line. Use multiple times
                         as needed.
     -e NETWORK_EXCEL, --network-excel=NETWORK_EXCEL
-                        Read CIRDs from column A (or --column). Use multiple
+                        Read CIRDs from an excel spreadsheet. Use multiple
                         times as needed.
-    -C COLUMN, --column=COLUMN
-                        Use this column in combination with --network-excel
-                        Defaults to A
+    -E NO_NETWORK_EXCEL, --no-network-excel=NO_NETWORK_EXCEL
+                        Read CIRDs from an excel spreadsheet. Use multiple
+                        times as needed.
+    -C SUBNET_COLUMN, --subnet-column=SUBNET_COLUMN
+                        Read subnet data with --network-excel  Defaults to A
+    -X LOCATION_COLUMN, --location-column=LOCATION_COLUMN
+                        Read subnet location name with --network-excel
+                        Defaults to B
     -i ID, --id=ID      Include only finding with this nessus ID the report.
                         Use multiple times as needed.
     -I NO_ID, --no-id=NO_ID
