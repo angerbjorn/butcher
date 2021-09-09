@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Vulnerability Assessment Report</title>
+		<style>
+@media screen {
+			body { font-family:"Helvetica Neue"; background-color: #f9f9f9;}	
+			.sensitivity { float: left; background-color: #CC4E21; color: #ffffff; font-size: 16px; letter-spacing: 0px; border: 2px solid rgba(255, 255, 255, 0.5); border-radius: 10px; -moz-border-radius: 10px; overflow: hidden; padding: 2px 20px; text-align: center; text-shadow: 0px 0px 4px #737373; width: 60px; display: block; box-shadow:  0px 0px 4px 0px #A3A3A3; }
+
+			.buttonCritical { background-color: #b2017b; }
+			.buttonHigh { background-color: red; }
+			.buttonMedium { background-color: #da6340; }
+			.buttonLow { background-color: #4db28b; }
+			.buttonNone { background-color: #d1cbc5; }
+			.Critical { color: #b2017b; }
+			.High { color: red; }
+			.Medium { color: #da6340; }
+			.Low { color: #4db28b; }
+			.None { color: #d1cbc5; }
+}
+@media print {
+			.sensitivity { float: left; color: #000000; font-size: 16px; font-family:"Helvetica Neue"; overflow: hidden; text-align: center;  width: 30px; display: block; }
+}
+			.ReportItem {  padding-top 50px;  }
+			.IP {padding-bottom: 0px !important; }
+			.ReportItem div {white-space: pre-wrap; padding-bottom: 15px; }
+			.desc::first-line {text-decoration: underline; color: #660146;}
+			.pluginName {font-size: 120%; }
+			.listItem {display:block; min-height:34px}
+			.hosts {padding-left: 20px; padding-right: 20px; }
+			hr {page-break-after: always;}
+		</style>
+	</head>
+    <body>
+        <h2>
+		Vulnerability Assessment Report</h2>
+        <div>Generated with the Butcher: https://github.com/angerbjorn/butcher</div>
+		<h3>Table of findings:</h3>
+		<p class="list">
+			{{#severityList}}
+			<div class="listItem" id="menu{{pluginID}}">
+				<div class="sensitivity button{{risk_factor}}">{{risk_factor}}</div>
+				<div class="pluginName"><span class="hosts">#{{count}}</span><a href="#item{{pluginID}}">{{pluginName}}</a></div>
+			</div>
+			{{/severityList}}
+		</p>
+		<hr>
+		<h3>Details section:</h3>
+		<p class="reports">
+		
+			<!--# ['@port', '@svc_name', '@protocol', '@severity', '@pluginID', '@pluginName', '@pluginFamily', 'agent', 'description', 'fname', 'plugin_modification_date', 'plugin_name', 'plugin_publication_date', 'plugin_type', 'risk_factor', 'script_version', 'solution', 'synopsis', 'plugin_output', 'IP', 'see_also', 'bid', 'cve', 'cvss3_base_score', 'cvss3_temporal_score', 'cvss3_temporal_vector', 'cvss3_vector', 'cvss_base_score', 'cvss_temporal_score', 'cvss_temporal_vector', 'cvss_vector', 'exploit_available', 'exploitability_ease', 'in_the_news', 'osvdb', 'vuln_publication_date', 'xref', 'cpe', 'patch_publication_date', 'cert', 'cwe', 'exploited_by_nessus', 'edb-id', 'icsa', 'cisco-bug-id', 'cisco-sa', 'iava', 'stig_severity', 'tra', 'zdi', 'canvas_package', 'exploit_framework_canvas', 'exploit_framework_core', 'attachment', 'exploit_framework_metasploit', 'metasploit_name', 'msft', 'unsupported_by_vendor', 'mskb', 'exploited_by_malware', 'mcafee-sb', 'cert-cc', 'iavb', 'vmsa', 'exploit_framework_exploithub', 'exploithub_sku', 'hp', 'rhsa', 'secunia', 'd2_elliot_name', 'exploit_framework_d2_elliot']-->
+			{{#details}}
+				{{#}}
+				<div class="ReportItem" id="item{{@pluginID}}">
+					<div class="pluginName" style="font-weight: bold;"><a href="#menu{{@pluginID}}"><span class="{{#risk_factor}}{{$}}{{/risk_factor}}">{{#risk_factor}}{{$}}{{/risk_factor}}</span> - {{@pluginName}}</a></div>
+
+					{{#description}}<div class="description desc">Description:<br>{{$}}</div>{{/description}}
+					{{#solution}}<div class="solution desc">Solution:<br>{{$}}</div>{{/solution}}
+					{{#synopsis}}<div class="synopsis desc">Synopsis:<br>{{$}}</div>{{/synopsis}}
+					<div class="plugin_output desc">Plugin output:<br>{{#plugin_output}}<br> &#11024; &#11024; &#11024; &#11024; &#11024; &#11024; Output for host {{IP}}{{#hostname}}/{{hostname}}{{/hostname}}&nbsp;:&nbsp;{{port}}&nbsp;({{svc_name}}) {{#location}}loc:&nbsp;{{location}}{{/location}} &#8628; &#8628; &#8628; &#8628; &#8628; &#8628; <br>{{output}}<br>{{/plugin_output}}</div>
+					{{#see_also}}<div class="see_also desc">See also:<br>{{$}}</div>{{/see_also}}
+					
+					{{#exploit_available}}<div class="exploit_available">Exploit available: {{$}}</div>{{/exploit_available}}
+					{{#exploit_framework_metasploit}}<div class="">exploit metasploit: {{$}}</div>{{/exploit_framework_metasploit}}
+					{{#exploit_framework_core}}<div class="">exploit core: {{$}}</div>{{/exploit_framework_core}}
+					{{#exploit_framework_exploithub}}<div class="">exploit exploithub: {{$}}</div>{{/exploit_framework_exploithub}}
+					{{#exploit_framework_canvas}}<div class="">exploit canvas: {{$}}</div>{{/exploit_framework_canvas}}
+					{{#exploit_framework_d2_elliot}}<div class="">exploit d2_elliot: {{$}}</div>{{/exploit_framework_d2_elliot}}
+					{{#secunia}}<div class="">secunia:{{$}}</div>{{/secunia}}
+					{{#attachment}}<div class="">attachment:{{$}}</div>{{/attachment}}
+					{{#in_the_news}}<div class="">in_the_news:{{$}}</div>{{/in_the_news}}
+					
+			<div class="IPS">Affected hosts: {{#IP}}<div class="IP">{{IP}}{{#hostname}}/{{hostname}}{{/hostname}} : {{port}}&nbsp;({{svc_name}}) {{#location}} - Location: {{location}}{{/location}}  Hostname-probability:<i>{{hostNameProbability}}</i></div>{{/IP}}</div>
+					<div>Plugin ID: {{@pluginID}}</div>
+					<div class="bid ">bid: {{#bid}}{{$}} {{/bid}}</div>
+					<div class="xref ">xref: {{#xref}}{{$}} {{/xref}}</div>
+					<div class="cve ">cve: {{#cve}}{{$}} {{/cve}}</div>
+					<div class="osvdb ">osvdb: {{#osvdb}}{{$}} {{/osvdb}}</div>
+
+				</div>
+				<hr>
+				{{/}}
+			{{/details}}
+		</p>
+    </body>
+</html>
+
