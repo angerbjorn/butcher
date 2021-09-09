@@ -15,7 +15,7 @@
   * [DNS cache - automaical load/save resolved DNS names found](#lookups-cache)
   * [Saved Excel report can also be used as a cache for future runs](#excel-cache)
 * [Improved OS detection](#improved-os-detection) - use authenticated more reliable data when available, that for example shows build and version numbers for Windows 10, 2016, 2019  
-* Tagging hosts with __"location"__ data for matching hosts or IP-ranges,  multiple ranges can be matched, such as `10.0.0.0/20 Paris` and `10.0.1.0/24 Office wifi` will tag 10.0.0.1 with `Paris, Office wifi`
+* [Tagging hosts](#location-tags) with __"location"__ data for matching hosts or IP-ranges,  multiple ranges can be matched, such as `10.0.0.0/20 Paris` and `10.0.1.0/24 Office wifi` will tag 10.0.0.1 with `Paris, Office wifi`
 * [Many filter options](#filter-options): 
   * [hosts filters that automatically understand different formats](#filter-option-hosts), such as IP addresses (IPv4) like 192.168.1.1, IPv4 address ranges like 192.168.1.0/24 or hostnames
   * Text or Excel lists with filters to include or exclude can be used
@@ -203,6 +203,38 @@ python3 butcher.py somefile.nessus
  Critical High Medium Low None        Addr             IP                     Operative-System                            hostname-probability
     0      1     5     0   99      ≈something  192.168.0.1       windows 10 enterprise ver 21H1 build 19043            Guess: unresolved nessus-netbios  
     0      1     3     3   91      ≈something  192.168.0.2    windows server 2016 standard ver 1607 build 14393        Guess: unresolved nessus-netbios
+```
+
+## Location tags 
+
+Use option `--location-excel <path to excel spreadsheet>` to add location tags.  
+
+Tagging hosts with __"location"__ data for matching hosts or IP-ranges, each host will show a list of all matching tags.  
+
+For example adding `192.168.1.0/24` and `192.168.1.0/26 Office wifi` will tag 192.168.1.57 with both tags `Paris / Office wifi`  
+
+![image of example location data](examples/location-data.png) 
+
+```
+python3 butcher.py examples/*.nessus --location-excel examples/location-data.xlsx --hosts 192.168.1.0/24
+ Critical High Medium Low None        Addr             IP            Location                     Operative-System                            hostname-probability 
+    0      0     0     0   8     ≈orkun-2.local   192.168.1.57 Paris / Office wifi                   unknown-os                  Guess: unresolved nessus-fqdn, suffix mismatch
+    0      0     2     0   19        ≈pos1        192.168.1.44 Paris / Office wifi       windows xp sp 2 or windows xp sp 3             Guess: unresolved nessus-netbios
+    2      0     4     0   61  ≈mince-prod.local  192.168.1.43 Paris / Office wifi linux kernel 3.5.0-17-generic on ubuntu 12.10 Guess: unresolved nessus-fqdn, suffix mismatch
+    0      0     0     0   4                      192.168.1.38 Paris / Office wifi                   unknown-os                                     Failure        
+    2      0     2     0   23        ≈admin       192.168.1.34 Paris / Office wifi       windows xp sp 2 or windows xp sp 3             Guess: unresolved nessus-netbios
+    0      0     2     0   20        ≈xp-pc       192.168.1.33 Paris / Office wifi       windows xp sp 2 or windows xp sp 3             Guess: unresolved nessus-netbios
+    0      0     0     0   17                    192.168.1.203   Paris / Servers                     unknown-os                                     Failure        
+    0      0     0     0   17                    192.168.1.202   Paris / Servers                     unknown-os                                     Failure        
+    0      0     0     0   17                    192.168.1.201   Paris / Servers                     unknown-os                                     Failure        
+    3      4     4     1   28       ≈server      192.168.1.100        Paris                   windows server 2003 sp 1                  Guess: unresolved nessus-netbios
+    0      0     1     4   23                     192.168.1.1  Paris / Office wifi        catalystos 1900 or nortel switch                          Failure        
+---------------------- Summary of findings from above: -------------------------
+ Critic High Medium Low None
+   7     4     15    5  237
+Total number of hosts:          11
+Uncompliant number of hosts:    3       ( 27% )
+--------------------------------------------------------------------------------
 ```
 
 ## Different output formats 
