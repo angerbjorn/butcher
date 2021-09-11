@@ -422,13 +422,14 @@ def cachePath( report_task_id ):
 	# create a path to a cache file in current running butchers base directory.
 	return os.path.join(os.path.dirname( os.path.realpath(__file__) ), ".namecache.%s.json" %report_task_id )
 
-def cacheAge( filePath , expire=60*60*24*7):
-	# check if exits, if file and last modified
-	if not os.path.isfile( filePath ):
-		return  "No previous cache exists"
-	if time.time() - os.path.getmtime( filePath ) > expire:
-		return "Expired"
-	return "Fresh"
+#def cacheAge( filePath , expire=60*60*24*7):
+# REMOVED as an old cache is most likely more correct !
+#	# check if exits, if file and last modified
+#	if not os.path.isfile( filePath ):
+#		return  "No previous cache exists"
+#	if time.time() - os.path.getmtime( filePath ) > expire:
+#		return "Expired"
+#	return "Fresh"
 
 def cacheLoad( filePath ):
 	if not os.path.isfile( filePath ):
@@ -460,10 +461,6 @@ if __name__ == "__main__":
 	parser.add_option("", "--force-glob", action="store_true", help='Expand wildcards such as * or ? in nessus file names, this is automatic in Windows cmd shell, but not in unix shells since they do that already')
 	parser.add_option("", "--no-glob", action="store_true", help='Do NOT expand wildcards')
 
-	parser.add_option("-a", "--lookups", action="store_true", help='Do active name lookups when identifying hostname. The result will be cached.')
-	parser.add_option("", "--lookups-no-certs", default=False, action="store_true", help='Disable remote host cerfiticate name grabbing - used when all other means of obtaining a hostname has failed as part of lookups. Require --lookups ')
-	parser.add_option("", "--no-cache", action="store_true", help='Do not read from the name cache')
-
 	group = optparse.OptionGroup(parser, "Output options, a few format and styles exists")
 	group.add_option("-f", "--format",  default='text', help='Optional output format, either of [text, html, excel, json, xml, grep] Defaults to text.')
 	# rename to overview, details and findings
@@ -481,6 +478,13 @@ if __name__ == "__main__":
 	group.add_option("-V", "--grep-raw", action="store_true", help="Hide host:port data on each line, useful to for example sample sets")
 	group.add_option("-J", "--grep-plugin", action="store_true", help="Show plugin_output data only")
 	group.add_option("-w", "--grep-description", action="store_true", help="Show description data only")
+	parser.add_option_group(group)
+
+	group = optparse.OptionGroup(parser, "Lookups mean active identification of routable hostnames. The result is automatically cached.")
+	parser.add_option("-a", "--lookups", action="store_true", help='Do active name lookups when identifying hostname. The result will be cached.')
+	parser.add_option("", "--lookups-no-certs", default=False, action="store_true", help='Disable remote host cerfiticate name grabbing - used when all other means of obtaining a hostname has failed as part of lookups. Require --lookups ')
+	parser.add_option("", "--no-cache", action="store_true", help='Do not read from the name cache')
+	parser.add_option("", "--save-cache", action="store_true", help='Update the cache without using --lookups that will do this automatically.')
 	parser.add_option_group(group)
 
 	group = optparse.OptionGroup(parser, "Add a hostname mapper that is used first to find a hostname.")
@@ -610,21 +614,12 @@ if __name__ == "__main__":
 	for nessus_file in args:
 		report_task_id = False
 		with open(nessus_file, 'r', encoding="utf8") as f:
-			# the namechache need the report_task_id, or will use the filename as idenfifier for the local name cache
-			# ...
-			# <ServerPreferences>
-			# ...
-			# <preference><name>report_task_id</name>
-			# <value>60933064-7047-e6d8-148e-c3915cefe8db6e87a8e0d90d7af1</value>
 			root = xml.etree.ElementTree.parse(f).getroot()
 			report_task_id = getReportTaskId(root, nessus_file)
 			
 			cFile = cachePath(report_task_id)
 			if not ops.lookups and not ops.no_cache:
-				cAge = cacheAge(cFile)
 				cJson = cacheLoad(cFile)
-				if cAge.startswith('Expired') and cJson[0]:
-					print("Warning: The name lookup cache file for %s is over a week old, please consider updating with active name lookups using --lookups" % os.path.basename(nessus_file), file=sys.stderr)
 				if not cJson[0]:
 					print("Warning: No name lookup cache for %s, consider active name lookups using --lookups" % os.path.basename(nessus_file), file=sys.stderr)
 				if cJson[0]:
@@ -955,7 +950,7 @@ if __name__ == "__main__":
 				exit()
 
 		# save namecache
-		if ops.lookups:
+		if ops.lookups or ops.save_cache:
 			with open( cachePath(report_task_id), 'w') as jf:
 				json.dump( nameCache , jf)
 

@@ -196,6 +196,9 @@ Total number of hosts:          11
 Uncompliant number of hosts:    3       ( 27% )
 --------------------------------------------------------------------------------
 ```
+
+The new set of hostnames is NOT automatically saved to the hostname cache, but can be when adding `--save-cache`
+
 ### Improved OS detection
 Use more reliable authenticated data when available, that for example shows build and version numbers for Windows 10, 2016, 2019:
 ```
@@ -489,7 +492,7 @@ The json structure passed to the template engine can be observed with --format j
 ## The butcher --help page
 
 ```
-python3 butcher.py --help
+python3 butcher.py examples/*.nessus --help
 Usage: butcher.py [OPTION]... <NESSUS_FILE>...
 
 Compiles a report from one or more .nessus v2 files. Output can be text, html
@@ -509,6 +512,8 @@ Options:
                         when all other means of obtaining a hostname has
                         failed as part of lookups. Require --lookups
   --no-cache            Do not read from the name cache
+  --save-cache          Update the cache without using --lookups that will do
+                        this automatically.
 
   Output options, a few format and styles exists:
     -f FORMAT, --format=FORMAT
@@ -539,6 +544,8 @@ Options:
     -J, --grep-plugin   Show plugin_output data only
     -w, --grep-description
                         Show description data only
+
+  Lookups mean active identification of routable hostnames. The result is automatically cached.:
 
   Add a hostname mapper that is used first to find a hostname.:
     -P HOSTNAME_EXCEL, --hostname-excel=HOSTNAME_EXCEL
