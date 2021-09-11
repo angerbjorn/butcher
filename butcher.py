@@ -463,7 +463,7 @@ if __name__ == "__main__":
 
 	group = optparse.OptionGroup(parser, "Output options, a few format and styles exists")
 	group.add_option("-f", "--format",  default='text', help='Optional output format, either of [text, html, excel, json, xml, grep] Defaults to text.')
-	# rename to overview, details and findings
+	# rename to overview, details and findings?
 	group.add_option("-O", "--style", help="Text output can be either: one line per finding (compact), one line per IP per finding (long), or one line host (host). Defaults to host")
 	group.add_option("-o", "--output-file", help="Optional output file to save result as. Mandatory for Excel output")
 	group.add_option("-K", "--output-sheet", default='', help="Excel sheet name to use when saving data")
@@ -480,14 +480,14 @@ if __name__ == "__main__":
 	group.add_option("-w", "--grep-description", action="store_true", help="Show description data only")
 	parser.add_option_group(group)
 
-	group = optparse.OptionGroup(parser, "Lookups mean active identification of routable hostnames. The result is automatically cached.")
-	parser.add_option("-a", "--lookups", action="store_true", help='Do active name lookups when identifying hostname. The result will be cached.')
-	parser.add_option("", "--lookups-no-certs", default=False, action="store_true", help='Disable remote host cerfiticate name grabbing - used when all other means of obtaining a hostname has failed as part of lookups. Require --lookups ')
-	parser.add_option("", "--no-cache", action="store_true", help='Do not read from the name cache')
-	parser.add_option("", "--save-cache", action="store_true", help='Update the cache without using --lookups that will do this automatically.')
+	group = optparse.OptionGroup(parser, "Lookups mean active identification of routable hostnames. The result is automatically cached")
+	group.add_option("-a", "--lookups", action="store_true", help='Do active name lookups when identifying hostname. The result will be cached.')
+	group.add_option("", "--lookups-no-certs", default=False, action="store_true", help='Disable remote host cerfiticate name grabbing - used when all other means of obtaining a hostname has failed as part of lookups. Require --lookups ')
+	group.add_option("", "--no-cache", action="store_true", help='Do not read from the name cache')
+	group.add_option("", "--save-cache", action="store_true", help='Update the cache without using --lookups that will do this automatically.')
 	parser.add_option_group(group)
 
-	group = optparse.OptionGroup(parser, "Add a hostname mapper that is used first to find a hostname.")
+	group = optparse.OptionGroup(parser, "Add a hostname mapper that is used first to find a hostname")
 	# rename or add to cache-something
 	group.add_option("-P", "--hostname-excel", action="append", default=[], help="Read hostname,ip and probability data cached from this excel spreadsheet, for example a previous --style host report. Use multiple times as needed.")
 	group.add_option("-p", "--hostname-sheet", default='1', help="Sheet-name or index number (starting with 1) with --hostname-excel  Defaults to 1")

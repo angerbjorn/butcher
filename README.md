@@ -506,14 +506,6 @@ Options:
                         this is automatic in Windows cmd shell, but not in
                         unix shells since they do that already
   --no-glob             Do NOT expand wildcards
-  -a, --lookups         Do active name lookups when identifying hostname. The
-                        result will be cached.
-  --lookups-no-certs    Disable remote host cerfiticate name grabbing - used
-                        when all other means of obtaining a hostname has
-                        failed as part of lookups. Require --lookups
-  --no-cache            Do not read from the name cache
-  --save-cache          Update the cache without using --lookups that will do
-                        this automatically.
 
   Output options, a few format and styles exists:
     -f FORMAT, --format=FORMAT
@@ -545,9 +537,17 @@ Options:
     -w, --grep-description
                         Show description data only
 
-  Lookups mean active identification of routable hostnames. The result is automatically cached.:
+  Lookups mean active identification of routable hostnames. The result is automatically cached:
+    -a, --lookups       Do active name lookups when identifying hostname. The
+                        result will be cached.
+    --lookups-no-certs  Disable remote host cerfiticate name grabbing - used
+                        when all other means of obtaining a hostname has
+                        failed as part of lookups. Require --lookups
+    --no-cache          Do not read from the name cache
+    --save-cache        Update the cache without using --lookups that will do
+                        this automatically.
 
-  Add a hostname mapper that is used first to find a hostname.:
+  Add a hostname mapper that is used first to find a hostname:
     -P HOSTNAME_EXCEL, --hostname-excel=HOSTNAME_EXCEL
                         Read hostname,ip and probability data cached from this
                         excel spreadsheet, for example a previous --style host
